@@ -1,7 +1,6 @@
 module QueryEngine
   module Matchable
 
-    # '$and' => And
     # '$gt' => Gt
     # '$gte' => Gte
     # '$in' => In
@@ -10,7 +9,8 @@ module QueryEngine
 
     OPERATORS = {
       '$all' => All,
-      '$or' => Or
+      '$or' => Or,
+      '$gt' => Gt
     }
 
     # Outer operators can only receive an array of hashs
