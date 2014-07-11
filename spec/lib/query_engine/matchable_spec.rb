@@ -37,6 +37,12 @@ module QueryEngine
       expect(described_class.matches?({a: 3}, a: { '$or' => [3, 6]})).to be_truthy
       expect(described_class.matches?(document, c: { d: {'$gt' => 3}})).to be_truthy
       expect(described_class.matches?(document, c: { d: {'$gt' => 4}})).to be_falsy
+      expect(described_class.matches?(document, c: { d: {'$lt' => 5}})).to be_truthy
+      expect(described_class.matches?(document, c: { d: {'$lt' => 4}})).to be_falsy
+      expect(described_class.matches?(document, c: { d: {'$lte' => 4}})).to be_truthy
+      expect(described_class.matches?(document, c: { d: {'$lte' => 3}})).to be_falsy
+      expect(described_class.matches?(document, c: { d: {'$gte' => 4}})).to be_truthy
+      expect(described_class.matches?(document, c: { d: {'$gte' => 5}})).to be_falsy
     end
 
     it 'should find in complex document' do
@@ -46,10 +52,12 @@ module QueryEngine
     end
 
     it 'should change context when an outer operator receives a hash' do
-      expect(described_class.matches?(complex_document, {'$or' => [{'conditions' => {'$or' => ['clear']}}, {'temperature' => '40'}]})).to be_truthy
-      expect(described_class.matches?(complex_document, {'temperature' => {'$or' => [{'max' => 20}, {'min' => -5}]}})).to be_truthy
-      expect(described_class.matches?(complex_document, {'temperature' => {'$and' => [{'max' => 20}, {'min' => -5}]}})).to be_falsy
-      expect(described_class.matches?(complex_document, {'temperature' => {'$and' => [{'max' => 20}, {'min' => 10}]}})).to be_truthy
+      expect(described_class.matches?(complex_document, {'$or' => {'conditions' => {'$or' => ['clear']}, 'temperature' => '40'}})).to be_truthy
+      expect(described_class.matches?(complex_document, {'$or' => {'conditions' => {'$or' => ['cloudy']}, 'temperature' => {'min' => 10}}})).to be_truthy
+      expect(described_class.matches?(complex_document, {'$or' => {'conditions' => {'$or' => ['cloudy']}, 'temperature' => {'min' => 15}}})).to be_falsy
+      expect(described_class.matches?(complex_document, {'temperature' => {'$or' => {'max' => 20, 'min' => -5}}})).to be_truthy
+      expect(described_class.matches?(complex_document, {'temperature' => {'$and' => {'max' => 20, 'min' => -5}}})).to be_falsy
+      expect(described_class.matches?(complex_document, {'temperature' => {'$and' => {'max' => 20, 'min' => 10}}})).to be_truthy
     end
   end
 end

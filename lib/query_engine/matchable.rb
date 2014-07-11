@@ -1,19 +1,17 @@
 module QueryEngine
   module Matchable
 
-    # '$gt' => Gt
-    # '$gte' => Gte
     # '$in' => In
-    # '$lt' => Lt
-    # '$lte' => Lte
 
     OPERATORS = {
       '$all' => All,
       '$or' => Or,
-      '$gt' => Gt
+      '$gt' => Gt,
+      '$lt' => Lt,
+      '$gte' => Gte,
+      '$lte' => Lte
     }
 
-    # Outer operators can only receive an array of hashs
     OUTER_OPERATORS = {
       '$or' => Outer::Or,
       '$and' => Outer::And
@@ -47,8 +45,8 @@ module QueryEngine
 
     def self.outer_operator?(key, value)
       OUTER_OPERATORS.keys.include?(key) &&
-        value.is_a?(Array) &&
-        value.all? { |item| item.is_a?(Hash) }
+        value.is_a?(Hash) &&
+        value.all? { |key, value| !OPERATORS.key?(key) && !OUTER_OPERATORS.key?(key) }
     end
 
     def self.operator_matcher(operator, key, document, value)
