@@ -127,5 +127,55 @@ module QueryEngine
         end
       end
     end
+
+    describe '$lt' do
+      let(:query) do
+        { a: { '$lt' => 2 } }
+      end
+
+      let(:examples) do
+        [
+          [{ a: 0 }, true],
+          [{ a: 1 }, true],
+          [{ a: 2 }, false],
+          [{ a: 3 }, false],
+          [{ b: 2 }, false],
+          [{}, false],
+          [{ a: 2, b: 1 }, false],
+          [{ a: 1, b: 1 }, true]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
+
+    describe '$lte' do
+      let(:query) do
+        { a: { '$lte' => 2 } }
+      end
+
+      let(:examples) do
+        [
+          [{ a: 0 }, true],
+          [{ a: 1 }, true],
+          [{ a: 2 }, true],
+          [{ a: 3 }, false],
+          [{ b: 2 }, false],
+          [{}, false],
+          [{ a: 2, b: 1 }, true],
+          [{ a: 1, b: 1 }, true]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
   end
 end
