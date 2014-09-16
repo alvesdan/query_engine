@@ -15,8 +15,8 @@ module QueryEngine
 
         def matchables
           Array.new([]).tap do |matches|
-            @queries.each_pair { |key, value|
-              matches << ::QueryEngine::Matchable.matches?(@document, {"#{key}" => value})
+            @queries.each { |query|
+              matches << ::QueryEngine::Matchable.matches?(@document, query)
             }
           end
         end

@@ -5,11 +5,12 @@ module QueryEngine
 
     OPERATORS = {
       '$all' => All,
-      '$or' => Or,
+      '$any' => Any,
       '$gt' => Gt,
       '$lt' => Lt,
       '$gte' => Gte,
-      '$lte' => Lte
+      '$lte' => Lte,
+      '$in' => In
     }
 
     OUTER_OPERATORS = {
@@ -45,8 +46,8 @@ module QueryEngine
 
     def self.outer_operator?(key, value)
       OUTER_OPERATORS.keys.include?(key) &&
-        value.is_a?(Hash) &&
-        value.all? { |key, value| !OPERATORS.key?(key) && !OUTER_OPERATORS.key?(key) }
+        value.is_a?(Array) &&
+        value.all? { |item| item.is_a?(Hash) }
     end
 
     def self.operator_matcher(operator, key, document, value)

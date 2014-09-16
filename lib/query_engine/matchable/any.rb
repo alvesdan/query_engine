@@ -1,6 +1,6 @@
 module QueryEngine
   module Matchable
-    class Or < Default
+    class Any < Default
       def matches?(value)
         fail StandardError unless value.is_a?(Array)
         value.map { |item| search(@document[@attribute], item) }.any?
