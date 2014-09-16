@@ -33,6 +33,12 @@ module QueryEngine
           matchables.all?
         end
       end
+
+      class Not < Default
+        def matches?
+          matchables.none?
+        end
+      end
     end
   end
 end
