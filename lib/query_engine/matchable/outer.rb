@@ -20,6 +20,18 @@ module QueryEngine
             }
           end
         end
+
+        def matchable_documents
+          matches = []
+          @document.each do |key, value|
+            @queries.each { |query|
+              result = ::QueryEngine::Matchable.matches?(value, query)
+              matches << result
+              break if result
+            }
+          end
+          matches
+        end
       end
 
       class Or < Default
@@ -37,6 +49,12 @@ module QueryEngine
       class Not < Default
         def matches?
           matchables.none?
+        end
+      end
+
+      class WithinKeys < Default
+        def matches?
+          matchable_documents.any?
         end
       end
     end

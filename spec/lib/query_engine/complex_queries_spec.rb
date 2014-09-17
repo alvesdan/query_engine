@@ -20,7 +20,53 @@ module QueryEngine
       }
     end
 
-    let(:one) do
+    let(:saturday_raining_tomorrow) do
+      {
+        '#forecast' => {
+          '20140920' => {
+            conditions: ['raining'],
+            temperature: {
+              max: 15,
+              min: 10,
+              average: 12.5
+            }
+          },
+          '20140921' => {
+            conditions: ['cloudy'],
+            temperature: {
+              max: 18,
+              min: 12,
+              average: 15
+            }
+          }
+        },
+        '#time' => {
+          weekday: 6,
+          hour: 9,
+          minute: 17
+        }
+      }
+    end
+
+    let(:chelsea_playing_on_weekend) do
+      {
+        '#time' => {
+          weekday: 6,
+          hour: 16,
+          minute: 5
+        },
+        '#tv' => {
+          'sky' => {
+            show: 'Sports Live'
+          },
+          'itv' => {
+            show: 'Manchester vs Liverpool'
+          }
+        }
+      }
+    end
+
+    let(:match_raining_weekday) do
       {
         '$and' => [
           {
@@ -37,78 +83,50 @@ module QueryEngine
       }
     end
 
-    let(:two) do
+    let(:match_saturday_raining_tomorrow) do
       {
         '$and' => [
           {
-            '#weather' => {
-              conditions: { '$any' => ['light_rain'] },
-            }
-          },
-          {
-            '#time' => {
-              weekday: { '$any' => [1, 2] }
-            }
-          }
-        ]
-      }
-    end
-
-    let(:three) do
-      {
-        '$or' => [
-          {
-            '#weather' => {
-              conditions: { '$any' => ['raining'] },
-            }
-          },
-          {
-            '#time' => {
-              weekday: { '$any' => [1, 2] }
-            }
-          }
-        ]
-      }
-    end
-
-    let(:four) do
-      {
-        '$and' => [
-          {
-            '#weather' => {
-              conditions: { '$any' => ['raining'] },
-            }
-          },
-          {
-            '$or' => [
-              {
-                '#time' => { weekday: 5 }
-              },
-              {
-                '#weather' => {
-                  temperature: { max: {'$lt' => 10} }
-                }
+            '#forecast' => {
+              '20140920' => {
+                conditions: { '$any' => ['raining'] }
               }
-            ]
+            }
+          },
+          {
+            '#time' => {
+              weekday: 6
+            }
           }
         ]
       }
     end
 
-    let(:five) do
+    let(:match_chelsea_playing_on_weekend) do
       {
-        '#weather' => {
-          temperature: { max: 15 }
-        }
+        '$and' => [
+          {
+            '#tv' => {
+              '$within_keys' => [
+                {
+                  show: { '$ilike' => 'Liverpool' }
+                }
+              ]
+            }
+          },
+          {
+            '#time' => {
+              weekday: { '$in' => [0, 6] }
+            }
+          }
+        ]
       }
     end
 
     it 'matches complex queries' do
-      expect(described_class.matches?(raining_weekday, one)).to be_truthy
-      expect(described_class.matches?(raining_weekday, two)).to be_falsey
-      expect(described_class.matches?(raining_weekday, three)).to be_truthy
-      expect(described_class.matches?(raining_weekday, four)).to be_falsey
-      expect(described_class.matches?(raining_weekday, five)).to be_truthy
+      expect(described_class.matches?(raining_weekday, match_raining_weekday)).to be_truthy
+      expect(described_class.matches?(saturday_raining_tomorrow, match_saturday_raining_tomorrow)).to be_truthy
+      expect(described_class.matches?(chelsea_playing_on_weekend, match_chelsea_playing_on_weekend)).to be_truthy
     end
   end
 end

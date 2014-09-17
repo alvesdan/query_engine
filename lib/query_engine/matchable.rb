@@ -16,7 +16,8 @@ module QueryEngine
     OUTER_OPERATORS = {
       '$or' => Outer::Or,
       '$and' => Outer::And,
-      '$not' => Outer::Not
+      '$not' => Outer::Not,
+      '$within_keys' => Outer::WithinKeys
     }
 
     def self.matches?(document, selector)
