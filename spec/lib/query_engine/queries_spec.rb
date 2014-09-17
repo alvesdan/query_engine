@@ -225,5 +225,49 @@ module QueryEngine
         end
       end
     end
+
+    describe '$like' do
+      let(:query) do
+        { a: { '$like' => 'car' } }
+      end
+
+      let(:examples) do
+        [
+          [{a: 'car'}, true],
+          [{a: 'my car'}, true],
+          [{a: 'Car'}, false],
+          [{a: 'my Car'}, false],
+          [{a: 'my bike'}, false]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
+
+    describe '$ilike' do
+      let(:query) do
+        { a: { '$ilike' => 'Car' } }
+      end
+
+      let(:examples) do
+        [
+          [{a: 'car'}, true],
+          [{a: 'my car'}, true],
+          [{a: 'Car'}, true],
+          [{a: 'my Car'}, true],
+          [{a: 'my bike'}, false]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
   end
 end

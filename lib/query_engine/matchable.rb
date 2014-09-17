@@ -1,8 +1,6 @@
 module QueryEngine
   module Matchable
 
-    # '$in' => In
-
     OPERATORS = {
       '$all' => All,
       '$any' => Any,
@@ -10,7 +8,9 @@ module QueryEngine
       '$lt' => Lt,
       '$gte' => Gte,
       '$lte' => Lte,
-      '$in' => In
+      '$in' => In,
+      '$like' => Like,
+      '$ilike' => Ilike
     }
 
     OUTER_OPERATORS = {
