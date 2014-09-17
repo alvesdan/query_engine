@@ -2,7 +2,7 @@ module QueryEngine
   module Matchable
     class Any < Default
       def matches?(value)
-        fail StandardError unless value.is_a?(Array)
+        fail Errors::QueryError unless value.is_a?(Array)
         value.map { |item| search(@document[@attribute], item) }.any?
       end
 

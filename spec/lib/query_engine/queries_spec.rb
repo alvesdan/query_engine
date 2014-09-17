@@ -177,5 +177,53 @@ module QueryEngine
         end
       end
     end
+
+    describe '$or' do
+      let(:query) do
+        { '$or' => [ { a: 1 }, { b: 1 } ] }
+      end
+
+      let(:examples) do
+        [
+          [{ a: 1 }, true],
+          [{ b: 1 }, true],
+          [{ a: 1, b: 1 }, true],
+          [{ a: 2, b: 1 }, true],
+          [{ a: 2 }, false],
+          [{ b: 2 }, false]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
+
+    describe '$or (nested)' do
+      let(:query) do
+        { nested: { '$or' => [ { a: 1 }, { b: 1 } ] } }
+      end
+
+      let(:examples) do
+        [
+          [{ nested: { a: 1 } }, true],
+          [{ nested: { b: 1 } }, true],
+          [{ nested: { a: 1, b: 1 } }, true],
+          [{ nested: { a: 2, b: 1 } }, true],
+          [{ nested: { a: 2 } }, false],
+          [{ nested: { b: 2 } }, false],
+          [{ nested: { foo: 2 } }, false],
+          [{ missing: 'foo' }, false]
+        ]
+      end
+
+      it 'should matches correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
   end
 end

@@ -8,6 +8,7 @@ require_relative 'query_engine/matchable/gte'
 require_relative 'query_engine/matchable/lte'
 require_relative 'query_engine/matchable/in'
 require_relative 'query_engine/matchable'
+require_relative 'query_engine/errors'
 
 module QueryEngine
 end
