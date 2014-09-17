@@ -7,8 +7,8 @@ require 'query_engine/version'
 Gem::Specification.new do |s|
   s.name        = 'query_engine'
   s.version     = QueryEngine::VERSION
-  s.authors     = ['Daniel Alves']
-  s.email       = ['daniel@danielalves.me']
+  s.authors     = ['Driftrock']
+  s.email       = ['dev@driftrock.com']
   s.homepage    = ''
   s.summary     = ''
   s.description = 'Matches a hash using a mongodb like query engine'
@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
   s.test_files = Dir['spec/**/*']
 
-  #s.add_dependency 'rails', '~> 4.1.0'
   s.add_dependency 'activesupport'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'

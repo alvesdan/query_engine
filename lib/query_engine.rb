@@ -1,3 +1,4 @@
+require 'active_support/core_ext/hash'
 require_relative 'query_engine/matchable/default'
 require_relative 'query_engine/matchable/outer'
 require_relative 'query_engine/matchable/all'

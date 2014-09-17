@@ -34,5 +34,9 @@ module QueryEngine
       expect(described_class.matches?(document, c: { d: {'$gte' => 4}})).to be_truthy
       expect(described_class.matches?(document, c: { d: {'$gte' => 5}})).to be_falsy
     end
+
+    it 'matches with symbols and strings' do
+      expect(described_class.matches?(document, {'a' => [1, 2]})).to be_truthy
+    end
   end
 end

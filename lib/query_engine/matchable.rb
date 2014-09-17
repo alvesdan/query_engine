@@ -22,6 +22,8 @@ module QueryEngine
 
     def self.matches?(document, selector)
       matchers = [true]
+      document.deep_stringify_keys!
+      selector.deep_stringify_keys!
       selector.each_pair do |key, value|
         if operator?(key)
           matchers << operator_matcher(key, key, document, value)
