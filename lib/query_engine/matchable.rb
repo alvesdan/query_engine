@@ -20,19 +20,22 @@ module QueryEngine
       '$within_keys' => Outer::WithinKeys
     }
 
-    def self.matches?(document, selector)
+    def self.matches?(document, selector, ignorable: [])
       matchers = [true]
       document.deep_stringify_keys!
       selector.deep_stringify_keys!
+      ignorable.map!(&:to_s)
       selector.each_pair do |key, value|
-        if operator?(key)
+        if ignorable.include?(key)
+          # ignore
+        elsif operator?(key)
           matchers << operator_matcher(key, key, document, value)
         else
           if value.is_a?(Hash) && document.key?(key)
             if operator?(value.keys.first)
               matchers << operator_matcher(value.keys.first, key, document, value.values.first)
             else
-              matchers << matches?(document[key], value)
+              matchers << matches?(document[key], value, ignorable: ignorable)
             end
           else
             matchers << Default.new(key, document).matches?(value)
@@ -57,9 +60,9 @@ module QueryEngine
     def self.operator_matcher(operator, key, document, value)
       if outer_operator?(operator, value)
         doc = document.key?(key) ? document[key] : document
-        return OUTER_OPERATORS[operator].new(doc, value).matches?
+        OUTER_OPERATORS[operator].new(doc, value).matches?
       else
-        return OPERATORS[operator].new(key, document).matches?(value)
+        OPERATORS[operator].new(key, document).matches?(value)
       end
     end
   end
