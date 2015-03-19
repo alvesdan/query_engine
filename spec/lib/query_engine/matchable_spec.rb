@@ -13,6 +13,26 @@ module QueryEngine
       }
     end
 
+    context 'with ignorable' do
+      let(:query) do
+        { c: { d: 4, ignoreme: :blah } }
+      end
+
+      it 'correctly ignores those keys' do
+        expect(described_class.matches?(document, query, ignorable: ['ignoreme'])).to be true
+      end
+    end
+
+    context 'without ignorable' do
+      let(:query) do
+        { c: { d: 4, ignoreme: :blah } }
+      end
+
+      it 'does not ignore those keys' do
+        expect(described_class.matches?(document, query, ignorable: [])).to be false
+      end
+    end
+
     it 'matches correctly' do
       expect(described_class.matches?(document, a: [1, 2])).to be_truthy
       expect(described_class.matches?(document, a: 2)).to be_falsy
