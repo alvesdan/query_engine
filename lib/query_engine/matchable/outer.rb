@@ -2,9 +2,11 @@ module QueryEngine
   module Matchable
     module Outer
       class Default
-        def initialize(document, queries)
+        attr_reader :ignorable
+        def initialize(document, queries, ignorable: [])
           @document = document
           @queries = queries
+          @ignorable = ignorable
         end
 
         def matches?
@@ -16,7 +18,8 @@ module QueryEngine
         def matchables
           Array.new([]).tap do |matches|
             @queries.each { |query|
-              matches << ::QueryEngine::Matchable.matches?(@document, query)
+              matches << ::QueryEngine::Matchable
+                .matches?(@document, query, ignorable: ignorable)
             }
           end
         end
@@ -25,7 +28,8 @@ module QueryEngine
           matches = []
           @document.each do |key, value|
             @queries.each { |query|
-              result = ::QueryEngine::Matchable.matches?(value, query)
+              result = ::QueryEngine::Matchable
+                .matches?(value, query, ignorable: ignorable)
               matches << result
               break if result
             }
