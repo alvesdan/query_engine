@@ -29,7 +29,8 @@ module QueryEngine
         if ignorable.include?(key)
           # ignore
         elsif operator?(key)
-          matchers << operator_matcher(key, key, document, value)
+          matchers << operator_matcher(key, key, document, value,
+                                       ignorable: ignorable)
         else
           if value.is_a?(Hash) && document.key?(key)
             if operator?(value.keys.first)
@@ -57,12 +58,14 @@ module QueryEngine
         value.all? { |item| item.is_a?(Hash) }
     end
 
-    def self.operator_matcher(operator, key, document, value)
+    def self.operator_matcher(operator, key, document, value, ignorable: [])
       if outer_operator?(operator, value)
         doc = document.key?(key) ? document[key] : document
-        OUTER_OPERATORS[operator].new(doc, value).matches?
-      else
+        OUTER_OPERATORS[operator].new(doc, value, ignorable: ignorable).matches?
+      elsif OPERATORS.key?(operator)
         OPERATORS[operator].new(key, document).matches?(value)
+      else
+        raise Errors::NotImplemented.new("#{operator} has not been implemented")
       end
     end
   end
