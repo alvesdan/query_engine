@@ -20,6 +20,8 @@ module QueryEngine
       '$within_keys' => Outer::WithinKeys
     }
 
+    WILDCARD = '$anything'
+
     def self.matches?(document, selector, ignorable: [])
       matchers = [true]
       document.deep_stringify_keys!
@@ -28,12 +30,16 @@ module QueryEngine
       selector.each_pair do |key, value|
         if ignorable.include?(key)
           # ignore
+        elsif wildcard?(value)
+          matchers << true
         elsif operator?(key)
           matchers << operator_matcher(key, key, document, value,
                                        ignorable: ignorable)
         else
           if value.is_a?(Hash) && document.key?(key)
-            if operator?(value.keys.first)
+            if wildcard?(value.values.first)
+              matchers << true
+            elsif operator?(value.keys.first)
               matchers << operator_matcher(value.keys.first, key, document, value.values.first)
             else
               matchers << matches?(document[key], value, ignorable: ignorable)
@@ -56,6 +62,11 @@ module QueryEngine
       OUTER_OPERATORS.keys.include?(key) &&
         value.is_a?(Array) &&
         value.all? { |item| item.is_a?(Hash) }
+    end
+
+    def self.wildcard?(obj)
+      return false unless obj.is_a?(String)
+      obj == WILDCARD
     end
 
     def self.operator_matcher(operator, key, document, value, ignorable: [])
