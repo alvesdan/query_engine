@@ -59,6 +59,24 @@ module QueryEngine
       end
     end
 
+    describe '$anything' do
+      let(:query) do
+        { a: '$anything', b: { '$gt' => '$anything' } }
+      end
+
+      let(:examples) do
+        [
+          [{ a: ['x'], b: 4 }, true]
+        ]
+      end
+
+      it 'should match correctly' do
+        examples.each do |example|
+          expect(described_class.matches?(example[0], query)).to eq(example[1])
+        end
+      end
+    end
+
     describe '$gt' do
       let(:query) do
         { a: { '$gt' => 1 } }
