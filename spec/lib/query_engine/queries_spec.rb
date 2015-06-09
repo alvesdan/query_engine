@@ -60,6 +60,18 @@ module QueryEngine
     end
 
     describe '$anything' do
+      context 'from live data' do
+        let(:data) do
+          { "#adverts_product$ba8cb52a34221563c591228d4a07e983" => {} }
+        end
+        let(:query) do
+          {"$and"=>[{"#adverts_product$ba8cb52a34221563c591228d4a07e983"=>{"Jaguar - XE"=>"$anything", "Mercedes-Benz - C-Class"=>"$anything", "$args"=>{"products"=>["Jaguar - XE", "Mercedes-Benz - C-Class"]}}}]}
+        end
+        it 'should be false' do
+          expect(described_class.matches?(data, query, ignorable: ['$args'])).to be false
+        end
+      end
+
       let(:query) do
         { a: '$anything', b: { '$gt' => '$anything' } }
       end

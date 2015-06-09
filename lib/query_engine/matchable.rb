@@ -31,16 +31,19 @@ module QueryEngine
         if ignorable.include?(key)
           # ignore
         elsif wildcard?(value)
-          matchers << true
+          matchers << document.key?(key)
         elsif operator?(key)
           matchers << operator_matcher(key, key, document, value,
                                        ignorable: ignorable)
         else
           if value.is_a?(Hash) && document.key?(key)
-            if wildcard?(value.values.first)
-              matchers << true
-            elsif operator?(value.keys.first)
-              matchers << operator_matcher(value.keys.first, key, document, value.values.first)
+            if operator?(value.keys.first)
+              if wildcard?(value.values.first)
+                matchers << true
+              else
+
+                matchers << operator_matcher(value.keys.first, key, document, value.values.first)
+              end
             else
               matchers << matches?(document[key], value, ignorable: ignorable)
             end
